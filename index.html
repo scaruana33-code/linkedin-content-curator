@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LinkedIn Content Curator</title>
+<meta name="description" content="A governed, human-in-the-loop workflow that curates contingent workforce news and publishes LinkedIn thought leadership posts only after two explicit approvals.">
+<meta property="og:title" content="LinkedIn Content Curator">
+<meta property="og:description" content="AI-curated, human-approved LinkedIn thought leadership on Microsoft Power Platform. Two approval gates. No autonomous posting.">
+<meta property="og:image" content="assets/cover.jpg">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0f0c; --bg2:#121812; --card:#161d17; --line:#26302780;
+  --ink:#eef3ee; --muted:#a3b0a5; --accent:#7bdc3a; --accent-ink:#0b0f0c;
+  --gate:#1f2a44; --radius:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header.nav{position:sticky;top:0;z-index:10;background:#0b0f0ccc;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.brand{font-weight:800;letter-spacing:.2px;color:var(--ink);text-decoration:none}
+.brand span{color:var(--accent)}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;margin-left:18px}
+nav a:hover{color:var(--ink)}
+@media (max-width:640px){nav a:not(.cta){display:none}}
+.btn{display:inline-block;padding:12px 20px;border-radius:999px;font-weight:600;text-decoration:none;font-size:15px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border:1px solid #3a4a3c;color:var(--ink)}
+nav a.cta{color:var(--accent-ink);background:var(--accent);padding:8px 14px;border-radius:999px;font-weight:600}
+.hero{padding:72px 0 40px}
+.hero .grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+@media (max-width:860px){.hero .grid{grid-template-columns:1fr}}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:var(--accent);font-weight:700}
+h1{font-size:clamp(34px,5vw,54px);line-height:1.08;margin:12px 0 18px;font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(26px,3.4vw,36px);line-height:1.15;margin:0 0 12px;letter-spacing:-.01em}
+h3{margin:0 0 6px;font-size:18px}
+.lead{font-size:18px;color:var(--muted);max-width:56ch}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.hero img{width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);box-shadow:0 20px 60px #0008}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.pill{font-size:13px;color:var(--muted);border:1px solid #2c382e;border-radius:999px;padding:5px 12px}
+section{padding:64px 0;border-top:1px solid var(--line)}
+section.alt{background:var(--bg2)}
+.sub{color:var(--muted);max-width:64ch;margin:0 0 32px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:14px;margin-bottom:12px}
+.card.gate{border-color:var(--accent);box-shadow:inset 0 0 0 1px #7bdc3a33}
+.card.gate .num{background:transparent;border:2px solid var(--accent);color:var(--accent)}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.channels{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.channel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;font-weight:600}
+.channel small{display:block;font-weight:400;color:var(--muted);margin-top:4px;font-size:13px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.gallery figure{margin:0;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.gallery img{display:block;width:100%;height:260px;object-fit:cover;object-position:top left}
+.gallery figcaption{background:var(--card);color:var(--muted);font-size:13px;padding:10px 12px}
+.gallery a{text-decoration:none}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;padding:0;margin:0;list-style:none}
+.rules li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;color:var(--muted);font-size:15px}
+.rules li b{color:var(--ink)}
+.guide{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;background:var(--card);border:1px solid var(--accent);border-radius:var(--radius);padding:28px}
+@media (max-width:700px){.guide{grid-template-columns:1fr}}
+footer{padding:36px 0 48px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+footer p{max-width:90ch}
+@media (max-width:860px){.cards{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#">LinkedIn Content <span>Curator</span></a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#channels">Where you approve</a>
+      <a href="#previews">Previews</a>
+      <a class="cta" href="docs/LinkedIn_Content_Curator_User_Guide.pdf">User guide</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap grid">
+      <div>
+        <div class="eyebrow">Caruana's Thought Corner</div>
+        <h1>AI finds the news. A human says yes. Then it posts.</h1>
+        <p class="lead">A governed LinkedIn content workflow for the contingent workforce industry. It curates credible, recent articles, drafts a thought leadership post in Stephen Caruana's voice, and publishes only after two explicit approvals.</p>
+        <div class="actions">
+          <a class="btn primary" href="docs/LinkedIn_Content_Curator_User_Guide.pdf">Read the user guide (PDF)</a>
+          <a class="btn ghost" href="#how">See how it works</a>
+        </div>
+        <div class="pills">
+          <span class="pill">Copilot Studio</span><span class="pill">Power Automate</span><span class="pill">Power Apps</span><span class="pill">SharePoint</span><span class="pill">Microsoft Teams</span><span class="pill">Power BI</span>
+        </div>
+      </div>
+      <img src="assets/cover.jpg" alt="LinkedIn Content Curator end user guide cover, No More Reports on the Run, founded by Stephen Caruana" width="1600" height="900">
+    </div>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="eyebrow">How it works</div>
+      <h2>Six steps, two human gates</h2>
+      <p class="sub">Runs weekly on a schedule or on demand. Every step is logged to SharePoint, so each post has a full audit trail from source article to live link.</p>
+      <div class="cards">
+        <div class="card"><div class="num">1</div><h3>Start a run</h3><p>Weekly schedule or a manual request from the Start a Run app, with an optional topic focus.</p></div>
+        <div class="card"><div class="num">2</div><h3>Curate articles</h3><p>A Copilot Studio News Curator agent returns one to three credible articles from this month or last, each with title, publisher, date, summary, and link.</p></div>
+        <div class="card gate"><div class="num">G1</div><span class="tag">Approval gate 1</span><h3>Pick the article</h3><p>Approve 1, 2, or 3, send back for new options with comments, or reject to stop the run.</p></div>
+        <div class="card"><div class="num">3</div><h3>Draft the post</h3><p>150 to 250 words in Stephen's voice: direct, executive, non-promotional, with the source link and disclaimer footers.</p></div>
+        <div class="card gate"><div class="num">G2</div><span class="tag">Approval gate 2</span><h3>Approve to publish</h3><p>Approve and publish, request edits with comments, or reject. Light edits on the card are published as written.</p></div>
+        <div class="card"><div class="num">4</div><h3>Publish and confirm</h3><p>Posts to LinkedIn, then sends a confirmation with the live post link and timestamp.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="channels" class="alt">
+    <div class="wrap">
+      <div class="eyebrow">Where you approve</div>
+      <h2>Decide from wherever you are</h2>
+      <p class="sub">Both gates can be answered from any of these channels. The first decision recorded wins, so nothing is approved twice.</p>
+      <div class="channels">
+        <div class="channel">Power Apps<small>Content Approvals app with run history and dashboard</small></div>
+        <div class="channel">Microsoft Teams<small>Adaptive Cards with one-tap decisions</small></div>
+        <div class="channel">Outlook email<small>Decision buttons that open the app on the right run</small></div>
+        <div class="channel">Copilot agent chat<small>Approve 1, 2, 3, send back, or reject in chat</small></div>
+        <div class="channel">Power BI<small>Daily-refreshed metrics with a manual refresh</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="previews">
+    <div class="wrap">
+      <div class="eyebrow">Previews</div>
+      <h2>What the approver sees</h2>
+      <p class="sub">Rendered with sample data. Click any preview to open it full size.</p>
+      <div class="gallery">
+        <a href="assets/previews/teams-gate1-article-selection.png"><figure><img loading="lazy" src="assets/previews/teams-gate1-article-selection.png" alt="Teams card for Gate 1 article selection"><figcaption>Teams: Gate 1 article selection</figcaption></figure></a>
+        <a href="assets/previews/teams-gate2-publish-approval.png"><figure><img loading="lazy" src="assets/previews/teams-gate2-publish-approval.png" alt="Teams card for Gate 2 publish approval"><figcaption>Teams: Gate 2 publish approval</figcaption></figure></a>
+        <a href="assets/previews/email-gate1-article-options.png"><figure><img loading="lazy" src="assets/previews/email-gate1-article-options.png" alt="Gate 1 article options email"><figcaption>Email: Gate 1 article options</figcaption></figure></a>
+        <a href="assets/previews/email-gate2-post-draft.png"><figure><img loading="lazy" src="assets/previews/email-gate2-post-draft.png" alt="Gate 2 post draft email"><figcaption>Email: Gate 2 post draft</figcaption></figure></a>
+        <a href="assets/previews/email-post-publish-confirmation.png"><figure><img loading="lazy" src="assets/previews/email-post-publish-confirmation.png" alt="Post published confirmation email"><figcaption>Email: post is live confirmation</figcaption></figure></a>
+        <a href="assets/previews/teams-post-publish-confirmation.png"><figure><img loading="lazy" src="assets/previews/teams-post-publish-confirmation.png" alt="Teams post published confirmation"><figcaption>Teams: post is live confirmation</figcaption></figure></a>
+        <a href="assets/previews/email-failure-alert.png"><figure><img loading="lazy" src="assets/previews/email-failure-alert.png" alt="Failure alert email"><figcaption>Email: failure alert</figcaption></figure></a>
+        <a href="assets/previews/teams-failure-alert.png"><figure><img loading="lazy" src="assets/previews/teams-failure-alert.png" alt="Teams failure alert card"><figcaption>Teams: failure alert</figcaption></figure></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap">
+      <div class="eyebrow">Guardrails</div>
+      <h2>Non-negotiables</h2>
+      <p class="sub">The rules the agent and the workflow enforce on every run.</p>
+      <ul class="rules">
+        <li><b>No fabricated sources.</b> One to three real articles, never padded to hit a number.</li>
+        <li><b>Strict recency.</b> Published this month or last month, or the article is dropped.</li>
+        <li><b>Complete records.</b> Every article carries a title, publisher, date, summary, and direct link.</li>
+        <li><b>Two approvals.</b> Nothing drafts before Gate 1 and nothing posts before Gate 2.</li>
+        <li><b>Fail loudly.</b> No valid articles means an alert goes out and the run stops.</li>
+        <li><b>Disclosed AI.</b> Every post ends with a generative AI disclaimer and a forward-looking statement.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="guide">
+        <div>
+          <div class="eyebrow">End user guide</div>
+          <h2>The full playbook, 36 pages</h2>
+          <p class="sub" style="margin:0">Starting runs, making gate decisions, checking drafts, reading the Power BI dashboard, and responding to alerts.</p>
+        </div>
+        <a class="btn primary" href="docs/LinkedIn_Content_Curator_User_Guide.pdf">Download the PDF</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Built by Stephen Caruana</b>, No More Reports on the Run. <a href="https://www.linkedin.com/in/scaruana22">Follow on LinkedIn</a>.</p>
+    <p>This page describes a workflow built on Microsoft Power Platform; the apps themselves run inside a private Microsoft 365 tenant and are not hosted here. Created with generative AI and human-reviewed. Views are my own and do not represent any current or former employer or client.</p>
+  </div>
+</footer>
+
+</body>
+</html>
