@@ -1,0 +1,5 @@
+<botcomponent_msdyn_aimodelset>
+  <botcomponent_msdyn_aimodel botcomponentid.schemaname="cwf_LinkedInNewsCurator.action.Customprompt1024202644303PM" msdyn_aimodelid.msdyn_aimodelid="14168528-fcb3-4180-92d1-052580087d36">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_msdyn_aimodel>
+</botcomponent_msdyn_aimodelset>
