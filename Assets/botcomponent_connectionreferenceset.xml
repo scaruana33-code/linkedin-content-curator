@@ -1,5 +1,1 @@
-<botcomponent_connectionreferenceset>
-  <botcomponent_connectionreference botcomponentid.schemaname="cwf_LinkedInNewsCurator.action.LinkedInV2-PostanarticleV2" connectionreferenceid.connectionreferencelogicalname="cwf_LinkedInNewsCurator.shared_linkedinv2.5f6e0839659b45e28f53ed6919b77e7f">
-    <iscustomizable>1</iscustomizable>
-  </botcomponent_connectionreference>
-</botcomponent_connectionreferenceset>
+
