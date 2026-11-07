@@ -7,7 +7,7 @@
 <meta name="description" content="A governed, human-in-the-loop workflow that curates contingent workforce news and publishes LinkedIn thought leadership posts only after two explicit approvals.">
 <meta property="og:title" content="LinkedIn Content Curator">
 <meta property="og:description" content="AI-curated, human-approved LinkedIn thought leadership on Microsoft Power Platform. Two approval gates. No autonomous posting.">
-<meta property="og:image" content="assets/cover.jpg">
+<meta property="og:image" content="Assets/cover.jpg">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,6 +33,7 @@ nav a:hover{color:var(--ink)}
 .btn{display:inline-block;padding:12px 20px;border-radius:999px;font-weight:600;text-decoration:none;font-size:15px}
 .btn.primary{background:var(--accent);color:var(--accent-ink)}
 .btn.ghost{border:1px solid #3a4a3c;color:var(--ink)}
+.note{font-size:13px;opacity:.75;margin:10px 0 0}
 nav a.cta{color:var(--accent-ink);background:var(--accent);padding:8px 14px;border-radius:999px;font-weight:600}
 .hero{padding:72px 0 40px}
 .hero .grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
@@ -84,7 +85,8 @@ footer p{max-width:90ch}
       <a href="#how">How it works</a>
       <a href="#channels">Where you approve</a>
       <a href="#previews">Previews</a>
-      <a class="cta" href="docs/LinkedIn_Content_Curator_User_Guide.pdf">User guide</a>
+      <a href="docs/LinkedIn_Content_Curator_User_Guide.pdf">User guide</a>
+      <a class="cta" href="https://apps.powerapps.com/" target="_blank" rel="noopener">Open the app</a>
     </nav>
   </div>
 </header>
@@ -97,14 +99,15 @@ footer p{max-width:90ch}
         <h1>AI finds the news. A human says yes. Then it posts.</h1>
         <p class="lead">A governed LinkedIn content workflow for the contingent workforce industry. It curates credible, recent articles, drafts a thought leadership post in Stephen Caruana's voice, and publishes only after two explicit approvals.</p>
         <div class="actions">
-          <a class="btn primary" href="docs/LinkedIn_Content_Curator_User_Guide.pdf">Read the user guide (PDF)</a>
-          <a class="btn ghost" href="#how">See how it works</a>
+          <a class="btn primary" href="https://apps.powerapps.com/" target="_blank" rel="noopener">Open the approvals app</a>
+          <a class="btn ghost" href="docs/LinkedIn_Content_Curator_User_Guide.pdf">Read the user guide (PDF)</a>
         </div>
+        <p class="note">The app opens in Microsoft Power Apps. Sign in with your work account and choose <b>LinkedIn Content Approvals</b>. Only approved users can open it.</p>
         <div class="pills">
           <span class="pill">Copilot Studio</span><span class="pill">Power Automate</span><span class="pill">Power Apps</span><span class="pill">SharePoint</span><span class="pill">Microsoft Teams</span><span class="pill">Power BI</span>
         </div>
       </div>
-      <img src="assets/cover.jpg" alt="LinkedIn Content Curator end user guide cover, No More Reports on the Run, founded by Stephen Caruana" width="1600" height="900">
+      <img src="Assets/cover.jpg" alt="LinkedIn Content Curator end user guide cover, No More Reports on the Run, founded by Stephen Caruana" width="1600" height="900">
     </div>
   </div>
 
@@ -145,14 +148,14 @@ footer p{max-width:90ch}
       <h2>What the approver sees</h2>
       <p class="sub">Rendered with sample data. Click any preview to open it full size.</p>
       <div class="gallery">
-        <a href="assets/previews/teams-gate1-article-selection.png"><figure><img loading="lazy" src="assets/previews/teams-gate1-article-selection.png" alt="Teams card for Gate 1 article selection"><figcaption>Teams: Gate 1 article selection</figcaption></figure></a>
-        <a href="assets/previews/teams-gate2-publish-approval.png"><figure><img loading="lazy" src="assets/previews/teams-gate2-publish-approval.png" alt="Teams card for Gate 2 publish approval"><figcaption>Teams: Gate 2 publish approval</figcaption></figure></a>
-        <a href="assets/previews/email-gate1-article-options.png"><figure><img loading="lazy" src="assets/previews/email-gate1-article-options.png" alt="Gate 1 article options email"><figcaption>Email: Gate 1 article options</figcaption></figure></a>
-        <a href="assets/previews/email-gate2-post-draft.png"><figure><img loading="lazy" src="assets/previews/email-gate2-post-draft.png" alt="Gate 2 post draft email"><figcaption>Email: Gate 2 post draft</figcaption></figure></a>
-        <a href="assets/previews/email-post-publish-confirmation.png"><figure><img loading="lazy" src="assets/previews/email-post-publish-confirmation.png" alt="Post published confirmation email"><figcaption>Email: post is live confirmation</figcaption></figure></a>
-        <a href="assets/previews/teams-post-publish-confirmation.png"><figure><img loading="lazy" src="assets/previews/teams-post-publish-confirmation.png" alt="Teams post published confirmation"><figcaption>Teams: post is live confirmation</figcaption></figure></a>
-        <a href="assets/previews/email-failure-alert.png"><figure><img loading="lazy" src="assets/previews/email-failure-alert.png" alt="Failure alert email"><figcaption>Email: failure alert</figcaption></figure></a>
-        <a href="assets/previews/teams-failure-alert.png"><figure><img loading="lazy" src="assets/previews/teams-failure-alert.png" alt="Teams failure alert card"><figcaption>Teams: failure alert</figcaption></figure></a>
+        <a href="Assets/previews/teams-gate1-article-selection.png"><figure><img loading="lazy" src="Assets/previews/teams-gate1-article-selection.png" alt="Teams card for Gate 1 article selection"><figcaption>Teams: Gate 1 article selection</figcaption></figure></a>
+        <a href="Assets/previews/teams-gate2-publish-approval.png"><figure><img loading="lazy" src="Assets/previews/teams-gate2-publish-approval.png" alt="Teams card for Gate 2 publish approval"><figcaption>Teams: Gate 2 publish approval</figcaption></figure></a>
+        <a href="Assets/previews/email-gate1-article-options.png"><figure><img loading="lazy" src="Assets/previews/email-gate1-article-options.png" alt="Gate 1 article options email"><figcaption>Email: Gate 1 article options</figcaption></figure></a>
+        <a href="Assets/previews/email-gate2-post-draft.png"><figure><img loading="lazy" src="Assets/previews/email-gate2-post-draft.png" alt="Gate 2 post draft email"><figcaption>Email: Gate 2 post draft</figcaption></figure></a>
+        <a href="Assets/previews/email-post-publish-confirmation.png"><figure><img loading="lazy" src="Assets/previews/email-post-publish-confirmation.png" alt="Post published confirmation email"><figcaption>Email: post is live confirmation</figcaption></figure></a>
+        <a href="Assets/previews/teams-post-publish-confirmation.png"><figure><img loading="lazy" src="Assets/previews/teams-post-publish-confirmation.png" alt="Teams post published confirmation"><figcaption>Teams: post is live confirmation</figcaption></figure></a>
+        <a href="Assets/previews/email-failure-alert.png"><figure><img loading="lazy" src="Assets/previews/email-failure-alert.png" alt="Failure alert email"><figcaption>Email: failure alert</figcaption></figure></a>
+        <a href="Assets/previews/teams-failure-alert.png"><figure><img loading="lazy" src="Assets/previews/teams-failure-alert.png" alt="Teams failure alert card"><figcaption>Teams: failure alert</figcaption></figure></a>
       </div>
     </div>
   </section>
