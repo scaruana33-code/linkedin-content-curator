@@ -1,1 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content Curator Demo</title>
+<meta name="description" content="A no-login, browser-only demo of the LinkedIn Content Curator: start a run, pick an article at Gate 1, approve the post at Gate 2. Sample data only; nothing is published.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0f0c; --bg2:#121812; --card:#161d17; --card2:#1b241c; --line:#2630278a;
+  --ink:#eef3ee; --muted:#a3b0a5; --accent:#7bdc3a; --accent-ink:#0b0f0c;
+  --warn:#f2b84b; --bad:#ff6b6b; --info:#6fb7ff; --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+button,select,input,textarea{font:inherit;color:inherit}
+.banner{background:#1f2a1a;border-bottom:1px solid #3a5a2a;color:#d8f5c4;font-size:13px;text-align:center;padding:8px 16px}
+header{position:sticky;top:0;z-index:10;background:#0b0f0ce6;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .in{max-width:1180px;margin:0 auto;padding:0 16px;height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:800;text-decoration:none;color:var(--ink);white-space:nowrap}
+.brand span{color:var(--accent)}
+.back{font-size:14px;color:var(--muted);text-decoration:none}
+.shell{max-width:1180px;margin:0 auto;padding:20px 16px 60px;display:grid;grid-template-columns:220px 1fr;gap:24px}
+@media (max-width:820px){.shell{grid-template-columns:1fr}}
+.shell>*{min-width:0}
+nav.side{display:flex;flex-direction:column;gap:6px}
+@media (max-width:820px){nav.side{flex-direction:row;overflow-x:auto;gap:8px;padding-bottom:4px}}
+nav.side button{background:transparent;border:1px solid transparent;border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:8px;white-space:nowrap}
+nav.side button:hover{color:var(--ink);background:var(--card)}
+nav.side button.on{color:var(--ink);background:var(--card);border-color:var(--line)}
+.count{background:var(--accent);color:var(--accent-ink);border-radius:999px;font-size:12px;font-weight:700;padding:0 8px;min-width:22px;text-align:center}
+.count.zero{background:#2c382e;color:var(--muted)}
+.side .reset{margin-top:14px;font-size:13px}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:18px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;max-width:70ch}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:620px){.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
+select,input[type=text],textarea{width:100%;background:var(--bg2);border:1px solid #33433580;border-radius:10px;padding:10px 12px;outline:none}
+select:focus,input:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:90px;line-height:1.5}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:10px 18px;font-weight:600;cursor:pointer;border:1px solid transparent;font-size:14px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border-color:#3a4a3c;color:var(--ink)}
+.btn.ghost:hover{border-color:var(--accent)}
+.btn.danger{background:transparent;border-color:#6a2c2c;color:#ffb3b3}
+.btn.danger:hover{border-color:var(--bad)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:0 0 16px}
+.fact{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.fact b{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.article{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.article h3{margin:0 0 4px;font-size:16px}
+.meta{font-size:13px;color:var(--muted);margin-bottom:8px}
+.sample{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);border:1px solid #6a5426;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+.status{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.s-g1{background:#2a3a1a;color:#c6f59a}.s-g2{background:#1a2f3f;color:#a9d6ff}.s-live{background:var(--accent);color:var(--accent-ink)}
+.s-rej{background:#3a1f1f;color:#ffb3b3}.s-fail{background:#3a2a12;color:#ffd38a}.s-cur{background:#2c382e;color:var(--muted)}
+.queue{display:flex;flex-direction:column;gap:10px}
+.qitem{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left;width:100%}
+.qitem:hover{border-color:var(--accent)}
+.qitem small{color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:28px 10px}
+.post{white-space:pre-wrap;background:#fff;color:#1d1d1d;border-radius:12px;padding:18px;font-size:14.5px;line-height:1.55}
+.post a{color:#0a66c2}
+.li{background:#fff;color:#1d1d1d;border-radius:12px;max-width:560px;border:1px solid #ddd;overflow:hidden}
+.li .hd{display:flex;gap:10px;align-items:center;padding:14px 16px 6px}
+.li .av{width:44px;height:44px;border-radius:50%;background:#0b0f0c;color:#7bdc3a;display:grid;place-items:center;font-weight:800}
+.li .nm{font-weight:700;font-size:14px}.li .nm small{display:block;font-weight:400;color:#666;font-size:12px}
+.li .bd{padding:6px 16px 14px;white-space:pre-wrap;font-size:14px;line-height:1.5}
+.li .bd a{color:#0a66c2}
+.li .ft{border-top:1px solid #eee;padding:8px 16px;color:#666;font-size:13px;display:flex;gap:18px}
+.wc{font-size:12px;color:var(--muted);margin-top:6px}
+.wc.bad{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.tablewrap{overflow-x:auto}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.step{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.step.done{border-color:#3a5a2a;color:#c6f59a}
+.step.now{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#1f2a1a;border:1px solid var(--accent);color:var(--ink);padding:12px 18px;border-radius:12px;opacity:0;transition:.25s;pointer-events:none;max-width:calc(100% - 32px);z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.spinner{width:18px;height:18px;border-radius:50%;border:3px solid #2c382e;border-top-color:var(--accent);animation:spin .8s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.log{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--muted);background:var(--bg2);border-radius:10px;padding:12px;margin-top:12px}
+.log div{padding:2px 0}
+.log .ok{color:#c6f59a}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi b{display:block;font-size:26px;font-weight:800}
+.kpi span{font-size:12px;color:var(--muted)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="banner">Demo mode. Sample data only, runs entirely in your browser. Nothing is sent to Microsoft 365, email, Teams, or LinkedIn.</div>
+<header>
+  <div class="in">
+    <a class="brand" href="./">Content <span>Curator</span> demo</a>
+    <a class="back" href="../">Back to overview</a>
+  </div>
+</header>
 
+<div class="shell">
+  <nav class="side" aria-label="Demo screens">
+    <button data-view="new" class="on">Start a run</button>
+    <button data-view="approvals">Approvals <span class="count zero" id="qcount">0</span></button>
+    <button data-view="history">Run history</button>
+    <button data-view="metrics">Metrics</button>
+    <button class="reset" id="resetBtn" title="Clear demo data stored in this browser">Reset demo</button>
+  </nav>
+
+  <main id="view"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+var KEY = "curator_demo_v1";
+
+/* ---------- Sample data (fictional; links point to example.com) ---------- */
+var TOPICS = {
+  "Contingent workforce": ["MSP and VMS","SOW and services procurement","AI in workforce technology","Worker classification","Direct sourcing","Total talent management"],
+  "Staffing": ["Staffing market outlook","Bill rates and pay transparency","Recruiter productivity"],
+  "Workforce technology": ["Vendor consolidation","Agentic AI in procurement","Data and analytics"]
+};
+var PUBLISHERS = ["Sample Staffing Weekly","Sample Procurement Review","Sample HR Journal","Sample Workforce Tech News","Sample Business Daily"];
+
+// Each template becomes an article; {topic} is filled from the request.
+var POOL = [
+  {t:"Buyers push {topic} programs to prove savings beyond rate cards", s:"A survey of program leaders finds most now track total cost and time-to-fill alongside markup, and many are renegotiating supplier tiers on that basis.", take:"buyers are done grading programs on markup alone", angle:"Rate cards are the easiest number to brag about and the least useful one to manage"},
+  {t:"Why {topic} is the next line item the CFO is asking about", s:"Finance teams are asking for clearer visibility into non-employee spend, with several large enterprises moving it into quarterly business reviews.", take:"non-employee spend is getting a seat in the quarterly review", angle:"If finance cannot see it, finance will eventually cut it"},
+  {t:"Program leaders rethink supplier counts as {topic} matures", s:"Organizations are trimming long-tail suppliers and investing in fewer, deeper partnerships, citing quality and compliance risk.", take:"fewer suppliers, deeper partnerships, and less noise", angle:"More suppliers never meant more talent; it usually meant more invoices"},
+  {t:"New guidance raises the compliance stakes for {topic}", s:"Updated regulatory guidance prompts employers to revisit classification reviews and contract language for independent workers.", take:"compliance is moving from a checkbox to a design requirement", angle:"Misclassification is not a paperwork problem, it is a business model problem"},
+  {t:"AI screening tools spread across {topic}, but buyers want receipts", s:"Adoption of AI tools in sourcing and screening is rising, while buyers ask vendors for audit trails and bias testing results.", take:"AI is welcome, but only with an audit trail attached", angle:"Show me the model, show me the testing, then we can talk"},
+  {t:"Time-to-fill improves where {topic} data is shared with suppliers", s:"Programs that share demand forecasts and feedback data with suppliers report faster fills and fewer rejected submittals.", take:"sharing data with suppliers actually speeds things up", angle:"You cannot ask suppliers to read your mind and then grade them on it"},
+  {t:"Hiring managers cite experience gaps in {topic} programs", s:"Hiring managers say clunky intake and slow approvals push them to go around the program, creating maverick spend.", take:"bad hiring manager experience creates maverick spend", angle:"If your process is harder than going rogue, people will go rogue"}
+];
+
+function ym(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");}
+function fmtDate(d){return d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});}
+function fmtTime(d){return new Date(d).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});}
+function pick(arr,n,seed){var a=arr.slice(),out=[];var r=seed;while(out.length<n&&a.length){r=(r*9301+49297)%233280;out.push(a.splice(Math.floor(r/233280*a.length),1)[0]);}return out;}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60);}
+function words(s){return (s.trim().match(/\S+/g)||[]).length;}
+
+/* ---------- State ---------- */
+var state = load();
+function blank(){return {runs:[],seq:0};}
+function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.runs)return s;}catch(e){}return blank();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function find(id){return state.runs.find(function(r){return r.id===id;});}
+function addEvent(run,msg){run.events.push({at:Date.now(),msg:msg});}
+
+function newRequestId(){
+  var d=new Date();state.seq++;
+  return "DEMO-"+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0")+"-"+String(state.seq).padStart(3,"0");
+}
+
+function curate(run){
+  var now=new Date(), seed=Date.now()%233280;
+  var allowPrior = run.params.published!=="This month only";
+  var n = 1 + (seed%3); // 1 to 3, never padded
+  var picks = pick(POOL.filter(function(p){return run.used.indexOf(p.t)<0;}), n, seed);
+  if(!picks.length){picks = pick(POOL,n,seed);}
+  return picks.map(function(p,i){
+    var d=new Date(now);
+    if(allowPrior && i===picks.length-1 && n>1){d.setDate(1);d.setDate(0);d.setDate(Math.max(1,d.getDate()-6-i));}
+    else {d.setDate(Math.max(1,now.getDate()-(2+i*3)));}
+    var pub = run.params.publisher==="Any credible publisher" ? PUBLISHERS[(seed+i)%PUBLISHERS.length] : "Sample "+run.params.publisher+" (fictional)";
+    var title=p.t.replace("{topic}",run.params.topic);
+    return {title:title,src:p.t,publisher:pub,date:d.toISOString(),summary:p.s,take:p.take,angle:p.angle,url:"https://example.com/sample/"+slug(title)};
+  });
+}
+
+var DISCLAIMER="Disclaimer - Created with generative AI and human-reviewed. For informational purposes only. Views are my own and do not represent any current or former employer or client. Please verify independently before acting. This content was developed with the assistance of generative AI and reviewed by a human prior to publication. It is provided for general informational and thought-leadership purposes only and does not constitute legal, financial, procurement, or employment advice.";
+var FORWARD="Forward-Looking Statement: This content may include forward-looking perspectives on the contingent workforce, staffing, MSP and VMS ecosystems, and workforce technology. Such views reflect current assumptions as of the publication date and are subject to change. Actual outcomes may differ materially.";
+
+function draft(run,a,feedback,version){
+  var hooks=[
+    "Let me save you a meeting: "+a.take+".",
+    "Here is the headline nobody puts on a slide: "+a.take+".",
+    "Somebody finally said it out loud, and the somebody is the data: "+a.take+"."
+  ];
+  var hook=hooks[(version-1)%hooks.length];
+  var body=[
+    hook,
+    "",
+    a.publisher+" reports that "+a.summary.charAt(0).toLowerCase()+a.summary.slice(1),
+    "",
+    a.angle+". I have sat in enough business reviews to know the pattern: the program that looks cheapest on paper is rarely the one delivering the best talent, the fastest fills, or the cleanest compliance record.",
+    "",
+    "What this means for "+run.params.audience.toLowerCase()+":",
+    "• Measure what the business actually feels: quality, speed, and risk, not just markup.",
+    "• Ask suppliers and technology partners for evidence, not adjectives.",
+    "• Make the right path the easy path, or people will find another one.",
+    "",
+    "So, be honest. Is your "+run.params.topic+" program judged on the number that is easiest to report, or the one that matters? Tell me I am wrong.",
+    "",
+    "Source: "+a.url,
+    "",
+    DISCLAIMER,
+    "",
+    FORWARD
+  ];
+  return body.filter(function(x,i,arr){return !(x===""&&arr[i-1]==="");}).join("\n").replace(/\n{3,}/g,"\n\n");
+}
+function bodyWords(text){return words(text.split("\nSource:")[0]);}
+
+/* ---------- Actions ---------- */
+function startRun(params){
+  var run={id:newRequestId(),created:Date.now(),runType:"Manual",params:params,status:"Curating",articles:[],used:[],sendBacks:0,selected:null,post:"",postVersion:0,events:[],liveUrl:null,publishedAt:null};
+  addEvent(run,"Run started from the Start a run screen ("+params.industry+" / "+params.topic+")");
+  state.runs.unshift(run);save();
+  return run;
+}
+function finishCuration(run){
+  run.articles=curate(run);
+  run.articles.forEach(function(a){run.used.push(a.src);});
+  run.status="Awaiting Gate 1";
+  addEvent(run,"Agent returned "+run.articles.length+" valid article"+(run.articles.length>1?"s":"")+" (recency checked: this month"+(run.params.published==="This month only"?"":" or last month")+")");
+  addEvent(run,"Gate 1 request sent to app, Teams, email and agent chat (simulated)");
+  save();
+}
+function gate1Approve(run,i){
+  run.selected=i;run.postVersion=1;
+  run.post=draft(run,run.articles[i],"",1);
+  run.status="Awaiting Gate 2";
+  addEvent(run,"Gate 1: Approve "+(i+1)+" ("+run.articles[i].title+")");
+  addEvent(run,"Agent drafted the LinkedIn post (v1); Gate 2 request sent (simulated)");
+  save();
+}
+function gate1SendBack(run,comment){
+  run.sendBacks++;
+  addEvent(run,"Gate 1: Send back for new articles"+(comment?" with comment \""+comment+"\"":""));
+  run.status="Curating";save();
+}
+function reject(run,gate){
+  run.status="Rejected";addEvent(run,"Gate "+gate+": Rejected. Workflow terminated.");save();
+}
+function gate2Edits(run,comment){
+  run.postVersion++;
+  run.post=draft(run,run.articles[run.selected],comment,run.postVersion);
+  addEvent(run,"Gate 2: Request edits"+(comment?" (\""+comment+"\")":"")+"; agent returned draft v"+run.postVersion);
+  save();
+}
+function gate2Publish(run,text){
+  run.post=text;run.status="Published (simulated)";run.publishedAt=Date.now();
+  run.liveUrl="https://example.com/demo-linkedin-post/"+run.id.toLowerCase();
+  addEvent(run,"Gate 2: Approve and publish. Demo only, nothing was posted to LinkedIn.");
+  addEvent(run,"Post-publish confirmation sent with link and timestamp (simulated)");
+  save();
+}
+
+/* ---------- Rendering ---------- */
+var view=document.getElementById("view");
+var current={name:"new",id:null};
+
+function statusPill(s){
+  var c={"Awaiting Gate 1":"s-g1","Awaiting Gate 2":"s-g2","Published (simulated)":"s-live","Rejected":"s-rej","Failed":"s-fail","Curating":"s-cur"}[s]||"s-cur";
+  return '<span class="status '+c+'">'+esc(s)+'</span>';
+}
+function pending(){return state.runs.filter(function(r){return r.status==="Awaiting Gate 1"||r.status==="Awaiting Gate 2";});}
+function updateCount(){
+  var n=pending().length,el=document.getElementById("qcount");
+  el.textContent=n;el.className="count"+(n?"":" zero");
+}
+function go(name,id){
+  current={name:name,id:id||null};
+  document.querySelectorAll("nav.side button[data-view]").forEach(function(b){b.classList.toggle("on",b.dataset.view===(name==="run"?"approvals":name));});
+  render();window.scrollTo({top:0,behavior:"smooth"});
+}
+function render(){
+  updateCount();
+  var fn={new:renderNew,approvals:renderApprovals,history:renderHistory,metrics:renderMetrics,run:renderRun}[current.name];
+  view.innerHTML="";fn();
+}
+function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove("show");},3200);}
+
+function opts(list,sel){return list.map(function(x){return '<option'+(x===sel?' selected':'')+'>'+esc(x)+'</option>';}).join("");}
+
+function renderNew(){
+  var inds=Object.keys(TOPICS);
+  view.innerHTML=
+  '<h1>Start a curation run</h1>'+
+  '<p class="sub">The agent finds 1 to 3 industry articles from this month or last month, then sends them to Gate 1 in the approval app, Teams and email. In this demo the agent is simulated with sample articles.</p>'+
+  '<div class="panel"><div class="grid2">'+
+    '<div><label for="fInd">Industry</label><select id="fInd">'+opts(inds,inds[0])+'</select></div>'+
+    '<div><label for="fTopic">Topic</label><select id="fTopic"></select></div>'+
+    '<div><label for="fAud">Audience</label><select id="fAud">'+opts(["Procurement leaders","Contingent workforce program leaders","HR and talent leaders","Finance leaders"])+'</select></div>'+
+    '<div><label for="fPub">Preferred publisher</label><select id="fPub">'+opts(["Any credible publisher","Staffing Industry Analysts","HR Dive","Spend Matters","SHRM","Harvard Business Review"])+'</select></div>'+
+    '<div><label for="fWhen">Published</label><select id="fWhen">'+opts(["This month or last month","This month only"])+'</select></div>'+
+    '<div><label for="fNote">Special instructions (optional)</label><input type="text" id="fNote" placeholder="e.g. Focus on new state contractor laws"></div>'+
+  '</div><div class="row" style="margin-top:18px"><button class="btn primary" id="startBtn">Start run</button><span class="wc">Runs in your browser only.</span></div>'+
+  '<div id="runlog" class="log hidden" aria-live="polite"></div></div>';
+  var fInd=document.getElementById("fInd"),fTopic=document.getElementById("fTopic");
+  function fillTopics(){fTopic.innerHTML=opts(TOPICS[fInd.value]);}
+  fInd.onchange=fillTopics;fillTopics();
+  document.getElementById("startBtn").onclick=function(){
+    var btn=this;btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Sending...';
+    var run=startRun({industry:fInd.value,topic:fTopic.value,audience:document.getElementById("fAud").value,publisher:document.getElementById("fPub").value,published:document.getElementById("fWhen").value,notes:document.getElementById("fNote").value.trim()});
+    runCuration(run,document.getElementById("runlog"),function(){btn.disabled=false;btn.textContent="Start run";});
+  };
+}
+
+function runCuration(run,logEl,done){
+  var lines=["Request "+run.id+" logged to the run list","Calling the News Curator agent...","Searching credible publishers for "+run.params.topic,"Checking recency, required fields and links"];
+  logEl.classList.remove("hidden");logEl.innerHTML="";
+  var i=0;
+  (function next(){
+    if(i<lines.length){logEl.insertAdjacentHTML("beforeend","<div>"+esc(lines[i++])+"</div>");setTimeout(next,550);return;}
+    finishCuration(run);
+    logEl.insertAdjacentHTML("beforeend",'<div class="ok">'+run.articles.length+' article'+(run.articles.length>1?'s':'')+' ready for Gate 1. <a href="#" id="openG1">Review now</a></div>');
+    document.getElementById("openG1").onclick=function(e){e.preventDefault();go("run",run.id);};
+    updateCount();toast("Gate 1 is ready for "+run.id);
+    if(done)done();
+  })();
+}
+
+function renderApprovals(){
+  var p=pending();
+  var html='<h1>Approvals</h1><p class="sub">Runs waiting on a decision. In the live system the same request also arrives in Teams, Outlook and agent chat, and the first decision recorded wins.</p><div class="queue">';
+  if(!p.length){html+='<div class="panel empty">Nothing is waiting. <a href="#" id="toNew">Start a run</a> to see Gate 1.</div>';}
+  p.forEach(function(r){
+    html+='<button class="qitem" data-id="'+r.id+'"><span><b>'+esc(r.id)+'</b><br><small>'+esc(r.params.topic)+' · '+fmtTime(r.created)+'</small></span>'+statusPill(r.status)+'</button>';
+  });
+  view.innerHTML=html+'</div>';
+  view.querySelectorAll(".qitem").forEach(function(b){b.onclick=function(){go("run",b.dataset.id);};});
+  var t=document.getElementById("toNew");if(t)t.onclick=function(e){e.preventDefault();go("new");};
+}
+
+function stepper(run){
+  var order=["Start","Curate","Gate 1","Draft","Gate 2","Published"];
+  var at={"Curating":1,"Awaiting Gate 1":2,"Awaiting Gate 2":4,"Published (simulated)":6,"Rejected":-1}[run.status];
+  return '<div class="steps">'+order.map(function(s,i){var c=at===-1?"":(i<at?"done":(i===at?"now":""));return '<span class="step '+c+'">'+s+'</span>';}).join("")+'</div>';
+}
+
+function renderRun(){
+  var run=find(current.id);
+  if(!run){go("approvals");return;}
+  var head='<div class="row" style="justify-content:space-between"><h1>'+esc(run.id)+'</h1>'+statusPill(run.status)+'</div>'+stepper(run)+
+    '<div class="facts"><div class="fact"><b>Run type</b>'+esc(run.runType)+'</div><div class="fact"><b>Topic</b>'+esc(run.params.topic)+'</div><div class="fact"><b>Audience</b>'+esc(run.params.audience)+'</div><div class="fact"><b>Send-backs so far</b>'+run.sendBacks+'</div></div>';
+  if(run.status==="Awaiting Gate 1"){view.innerHTML=head+gate1Html(run);wireGate1(run);}
+  else if(run.status==="Awaiting Gate 2"){view.innerHTML=head+gate2Html(run);wireGate2(run);}
+  else if(run.status==="Curating"){view.innerHTML=head+'<div class="panel"><h2>Finding new articles</h2><div id="runlog" class="log"></div></div>';runCuration(run,document.getElementById("runlog"),function(){setTimeout(function(){if(current.id===run.id)render();},700);});}
+  else {view.innerHTML=head+doneHtml(run);}
+  view.insertAdjacentHTML("beforeend",eventsHtml(run));
+}
+
+function gate1Html(run){
+  var h='<div class="panel"><span class="status s-g1">Approval gate 1</span><h2 style="margin-top:10px">Contingent Workforce Article Options for Review</h2><p class="sub">Nothing gets drafted until you choose. Pick one article, send back for new options, or reject to stop the run.</p>';
+  run.articles.forEach(function(a,i){
+    h+='<div class="article"><h3>'+(i+1)+'. '+esc(a.title)+'<span class="sample">Sample</span></h3>'+
+      '<div class="meta">'+esc(a.publisher)+' · Published '+fmtDate(new Date(a.date))+'</div><p style="margin:0 0 12px">'+esc(a.summary)+'</p>'+
+      '<div class="row"><button class="btn primary" data-approve="'+i+'">Approve '+(i+1)+'</button><a class="btn ghost" href="'+esc(a.url)+'" target="_blank" rel="noopener" title="Sample link to example.com">Read article '+(i+1)+'</a></div></div>';
+  });
+  h+='<label for="g1c" style="margin-top:8px">Comments for send back (optional)</label><textarea id="g1c" placeholder="e.g. Prefer something on SOW governance"></textarea>'+
+    '<div class="row" style="margin-top:12px"><button class="btn ghost" id="g1back">Send back for new articles</button><button class="btn danger" id="g1rej">Reject</button></div></div>';
+  return h;
+}
+function wireGate1(run){
+  view.querySelectorAll("[data-approve]").forEach(function(b){b.onclick=function(){gate1Approve(run,+b.dataset.approve);toast("Approved article "+(+b.dataset.approve+1)+". Draft is ready for Gate 2.");render();};});
+  document.getElementById("g1back").onclick=function(){gate1SendBack(run,document.getElementById("g1c").value.trim());render();};
+  document.getElementById("g1rej").onclick=function(){reject(run,1);toast("Run rejected and terminated.");render();};
+}
+
+function gate2Html(run){
+  var a=run.articles[run.selected], wc=bodyWords(run.post);
+  return '<div class="panel"><span class="status s-g2">Approval gate 2</span><h2 style="margin-top:10px">LinkedIn Post Draft for Approval</h2>'+
+    '<p class="sub">Draft v'+run.postVersion+' from approved article: <a href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.title)+'</a>. Light edits here are published as written.</p>'+
+    '<label for="g2text">Post text</label><textarea id="g2text" style="min-height:360px">'+esc(run.post)+'</textarea>'+
+    '<div class="wc" id="g2wc">'+wcText(wc)+'</div>'+
+    '<label for="g2c" style="margin-top:14px">Edit request for the agent (optional)</label><input type="text" id="g2c" placeholder="e.g. Shorter hook, more on buyer risk">'+
+    '<div class="row" style="margin-top:14px"><button class="btn primary" id="g2pub">Approve and publish</button><button class="btn ghost" id="g2edit">Request edits</button><button class="btn danger" id="g2rej">Reject</button></div>'+
+    '<p class="wc">Demo: "publish" shows a mock LinkedIn post. Nothing is sent to LinkedIn.</p></div>';
+}
+function wcText(n){return '<span class="'+(n<150||n>250?"bad":"")+'">'+n+' words before the source and footers (target 150 to 250)</span>';}
+function wireGate2(run){
+  var ta=document.getElementById("g2text");
+  ta.oninput=function(){document.getElementById("g2wc").innerHTML=wcText(bodyWords(ta.value));};
+  document.getElementById("g2pub").onclick=function(){gate2Publish(run,ta.value);toast("Published (simulated). Confirmation sent.");render();};
+  document.getElementById("g2edit").onclick=function(){gate2Edits(run,document.getElementById("g2c").value.trim());toast("Agent returned draft v"+run.postVersion);render();};
+  document.getElementById("g2rej").onclick=function(){reject(run,2);toast("Run rejected and terminated.");render();};
+}
+
+function linkify(t){return esc(t).replace(/(https:\/\/example\.com\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');}
+function doneHtml(run){
+  if(run.status==="Published (simulated)"){
+    return '<div class="panel"><h2>Post is live (simulated)</h2><p class="sub">Confirmation would go to email and Teams with the LinkedIn link and timestamp: <b>'+fmtTime(run.publishedAt)+'</b>.</p>'+
+      '<div class="li"><div class="hd"><div class="av">SC</div><div class="nm">Stephen Caruana<small>Contingent workforce executive · Just now</small></div></div><div class="bd">'+linkify(run.post)+'</div><div class="ft"><span>Like</span><span>Comment</span><span>Repost</span></div></div>'+
+      '<div class="row" style="margin-top:16px"><button class="btn primary" id="again">Start another run</button></div></div>';
+  }
+  return '<div class="panel"><h2>Run terminated</h2><p class="sub">A reject at either gate stops the workflow. Nothing is drafted or published after a reject.</p><button class="btn primary" id="again">Start another run</button></div>';
+}
+function eventsHtml(run){
+  return '<div class="panel"><h2>Audit trail</h2><div class="tablewrap"><table><thead><tr><th>Time</th><th>Event</th></tr></thead><tbody>'+
+    run.events.slice().reverse().map(function(e){return '<tr><td style="white-space:nowrap">'+fmtTime(e.at)+'</td><td>'+esc(e.msg)+'</td></tr>';}).join("")+
+    '</tbody></table></div></div>';
+}
+
+function renderHistory(){
+  var html='<h1>Run history</h1><p class="sub">Every run and decision, stored only in this browser. In the live system this is the SharePoint run list.</p><div class="panel">';
+  if(!state.runs.length){html+='<div class="empty">No runs yet. <a href="#" id="toNew">Start a run</a>.</div>';}
+  else{
+    html+='<div class="tablewrap"><table><thead><tr><th>Request ID</th><th>Started</th><th>Topic</th><th>Status</th></tr></thead><tbody>';
+    state.runs.forEach(function(r){html+='<tr><td><a href="#" data-id="'+r.id+'">'+esc(r.id)+'</a></td><td style="white-space:nowrap">'+fmtTime(r.created)+'</td><td>'+esc(r.params.topic)+'</td><td>'+statusPill(r.status)+'</td></tr>';});
+    html+='</tbody></table></div>';
+  }
+  view.innerHTML=html+'</div>';
+  view.querySelectorAll("[data-id]").forEach(function(a){a.onclick=function(e){e.preventDefault();go("run",a.dataset.id);};});
+  var t=document.getElementById("toNew");if(t)t.onclick=function(e){e.preventDefault();go("new");};
+}
+
+function renderMetrics(){
+  var r=state.runs, pub=r.filter(function(x){return x.status==="Published (simulated)";}).length,
+      rej=r.filter(function(x){return x.status==="Rejected";}).length,
+      sb=r.reduce(function(s,x){return s+x.sendBacks;},0),
+      art=r.reduce(function(s,x){return s+x.articles.length;},0);
+  view.innerHTML='<h1>Metrics</h1><p class="sub">A simple stand-in for the Power BI dashboard, calculated from your demo runs. Updated <span id="mupd">'+fmtTime(Date.now())+'</span>.</p>'+
+    '<div class="kpis"><div class="kpi"><b>'+r.length+'</b><span>Runs started</span></div><div class="kpi"><b>'+pub+'</b><span>Posts published</span></div><div class="kpi"><b>'+pending().length+'</b><span>Awaiting a decision</span></div><div class="kpi"><b>'+rej+'</b><span>Rejected</span></div><div class="kpi"><b>'+sb+'</b><span>Send-backs</span></div><div class="kpi"><b>'+(r.length?(art/r.length).toFixed(1):"0")+'</b><span>Articles per run</span></div></div>'+
+    '<button class="btn ghost" id="refresh">Refresh</button>';
+  document.getElementById("refresh").onclick=function(){render();toast("Metrics refreshed");};
+}
+
+document.querySelectorAll("nav.side button[data-view]").forEach(function(b){b.onclick=function(){go(b.dataset.view);};});
+document.getElementById("resetBtn").onclick=function(){state=blank();save();toast("Demo data cleared");go("new");};
+view.addEventListener("click",function(e){if(e.target&&e.target.id==="again"){go("new");}});
+
+// Deep links: demo/#approvals, demo/#history, demo/#metrics
+var h=location.hash.replace("#","");
+if(["new","approvals","history","metrics"].indexOf(h)>=0){go(h);}else{render();}
+})();
+</script>
+</body>
+</html>
