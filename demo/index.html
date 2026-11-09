@@ -100,6 +100,9 @@ th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;le
 .kpi b{display:block;font-size:26px;font-weight:800}
 .kpi span{font-size:12px;color:var(--muted)}
 .hidden{display:none}
+.check{display:flex;align-items:center;gap:8px;margin-top:16px;color:var(--ink);font-size:14px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--accent)}
+select[disabled]{opacity:.6}
 </style>
 </head>
 <body>
@@ -130,22 +133,74 @@ th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;le
 var KEY = "curator_demo_v1";
 
 /* ---------- Sample data (fictional; links point to example.com) ---------- */
-var TOPICS = {
-  "Contingent workforce": ["MSP and VMS","SOW and services procurement","AI in workforce technology","Worker classification","Direct sourcing","Total talent management"],
-  "Staffing": ["Staffing market outlook","Bill rates and pay transparency","Recruiter productivity"],
-  "Workforce technology": ["Vendor consolidation","Agentic AI in procurement","Data and analytics"]
-};
+// Mirrors the SharePoint 'Industry Topics' list (Title = "Industry | Topic").
+var INDUSTRY_TOPICS = [
+  "Contingent Workforce | Vendor Management",
+  "Contingent Workforce | MSP (Managed Service Programs)",
+  "Contingent Workforce | Workforce Optimization",
+  "Contingent Workforce | Talent Supply Chain",
+  "Contingent Workforce | Compliance & Risk",
+  "Contingent Workforce | Rate Benchmarking",
+  "Technology and AI | Generative AI",
+  "Technology and AI | Machine Learning",
+  "Technology and AI | Automation & RPA",
+  "Technology and AI | Data Engineering",
+  "Technology and AI | AI Governance & Ethics",
+  "Technology and AI | Cloud Architecture",
+  "Technology and AI | Predictive Analytics",
+  "Healthcare | Staffing Shortages",
+  "Healthcare | Travel Nursing",
+  "Healthcare | Credentialing & Compliance",
+  "Healthcare | Patient Outcomes Analytics",
+  "Healthcare | Healthcare Workforce Tech",
+  "Healthcare | Value-Based Care",
+  "Legal | eDiscovery",
+  "Legal | Contract Lifecycle Management (CLM)",
+  "Legal | Legal Operations",
+  "Legal | Compliance & Regulatory Trends",
+  "Legal | AI in Legal",
+  "Legal | Litigation Support",
+  "Financial Services | Risk Management",
+  "Financial Services | Regulatory Compliance (SEC, FINRA)",
+  "Financial Services | Fraud Detection",
+  "Financial Services | FinTech Innovation",
+  "Financial Services | Wealth Management Tech",
+  "Financial Services | Banking Transformation",
+  "Retail and Consumer | Omnichannel Strategy",
+  "Retail and Consumer | Customer Experience (CX)",
+  "Retail and Consumer | Supply Chain Optimization",
+  "Retail and Consumer | Seasonal Staffing",
+  "Retail and Consumer | Personalization & Data",
+  "Retail and Consumer | eCommerce Trends",
+  "Manufacturing | Supply Chain Resilience",
+  "Manufacturing | Smart Factory / Industry 4.0",
+  "Manufacturing | Workforce Automation",
+  "Manufacturing | Quality & Compliance",
+  "Manufacturing | Procurement Optimization",
+  "Manufacturing | ESG in Manufacturing",
+  "Public Sector | Government Staffing",
+  "Public Sector | Procurement & RFPs",
+  "Public Sector | Digital Transformation",
+  "Public Sector | Policy & Compliance",
+  "Public Sector | Workforce Modernization",
+  "Public Sector | Grants & Funding"
+];
+var TOPICS = {};
+INDUSTRY_TOPICS.forEach(function(t){var p=t.split("|"),ind=p[0].trim(),top=p[1].trim();(TOPICS[ind]=TOPICS[ind]||[]).push(top);});
+Object.keys(TOPICS).forEach(function(k){TOPICS[k].sort();});
+var AUDIENCES = ["Buyers / Client-Side Decision Makers","Procurement Leaders","MSP Program Leaders","VMS Practitioners","HR / Talent Leaders","Suppliers / Staffing Firms"];
+var STYLES = ["Strategic","Operational","Tactical","Executive","Educational"];
 var PUBLISHERS = ["Sample Staffing Weekly","Sample Procurement Review","Sample HR Journal","Sample Workforce Tech News","Sample Business Daily"];
 
 // Each template becomes an article; {topic} is filled from the request.
 var POOL = [
-  {t:"Buyers push {topic} programs to prove savings beyond rate cards", s:"A survey of program leaders finds most now track total cost and time-to-fill alongside markup, and many are renegotiating supplier tiers on that basis.", take:"buyers are done grading programs on markup alone", angle:"Rate cards are the easiest number to brag about and the least useful one to manage"},
+  {t:"{topic}: buyers want proof of value, not just lower rates", s:"A survey of program leaders finds most now track total cost and time-to-fill alongside markup, and many are renegotiating supplier tiers on that basis.", take:"buyers are done grading programs on markup alone", angle:"Rate cards are the easiest number to brag about and the least useful one to manage"},
   {t:"Why {topic} is the next line item the CFO is asking about", s:"Finance teams are asking for clearer visibility into non-employee spend, with several large enterprises moving it into quarterly business reviews.", take:"non-employee spend is getting a seat in the quarterly review", angle:"If finance cannot see it, finance will eventually cut it"},
-  {t:"Program leaders rethink supplier counts as {topic} matures", s:"Organizations are trimming long-tail suppliers and investing in fewer, deeper partnerships, citing quality and compliance risk.", take:"fewer suppliers, deeper partnerships, and less noise", angle:"More suppliers never meant more talent; it usually meant more invoices"},
-  {t:"New guidance raises the compliance stakes for {topic}", s:"Updated regulatory guidance prompts employers to revisit classification reviews and contract language for independent workers.", take:"compliance is moving from a checkbox to a design requirement", angle:"Misclassification is not a paperwork problem, it is a business model problem"},
-  {t:"AI screening tools spread across {topic}, but buyers want receipts", s:"Adoption of AI tools in sourcing and screening is rising, while buyers ask vendors for audit trails and bias testing results.", take:"AI is welcome, but only with an audit trail attached", angle:"Show me the model, show me the testing, then we can talk"},
-  {t:"Time-to-fill improves where {topic} data is shared with suppliers", s:"Programs that share demand forecasts and feedback data with suppliers report faster fills and fewer rejected submittals.", take:"sharing data with suppliers actually speeds things up", angle:"You cannot ask suppliers to read your mind and then grade them on it"},
-  {t:"Hiring managers cite experience gaps in {topic} programs", s:"Hiring managers say clunky intake and slow approvals push them to go around the program, creating maverick spend.", take:"bad hiring manager experience creates maverick spend", angle:"If your process is harder than going rogue, people will go rogue"}
+  {t:"Leaders rethink partner counts as {topic} matures", s:"Organizations are trimming long-tail suppliers and investing in fewer, deeper partnerships, citing quality and compliance risk.", take:"fewer suppliers, deeper partnerships, and less noise", angle:"More suppliers never meant more talent; it usually meant more invoices"},
+  {t:"New guidance raises the compliance stakes in {topic}", s:"Updated regulatory guidance prompts employers to revisit classification reviews and contract language for independent workers.", take:"compliance is moving from a checkbox to a design requirement", angle:"Misclassification is not a paperwork problem, it is a business model problem"},
+  {t:"AI tools spread across {topic}, but buyers want receipts", s:"Adoption of AI tools in sourcing and screening is rising, while buyers ask vendors for audit trails and bias testing results.", take:"AI is welcome, but only with an audit trail attached", angle:"Show me the model, show me the testing, then we can talk"},
+  {t:"Results improve where {topic} data is shared with partners", s:"Programs that share demand forecasts and feedback data with suppliers report faster fills and fewer rejected submittals.", take:"sharing data with suppliers actually speeds things up", angle:"You cannot ask suppliers to read your mind and then grade them on it"},
+  {t:"Front-line managers cite experience gaps in {topic}", s:"Hiring managers say clunky intake and slow approvals push them to go around the program, creating maverick spend.", take:"bad hiring manager experience creates maverick spend", angle:"If your process is harder than going rogue, people will go rogue"}
 ];
 
 function ym(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");}
@@ -171,7 +226,7 @@ function newRequestId(){
 
 function curate(run){
   var now=new Date(), seed=Date.now()%233280;
-  var allowPrior = run.params.published!=="This month only";
+  var allowPrior = +run.params.recency > 1;
   var n = 1 + (seed%3); // 1 to 3, never padded
   var picks = pick(POOL.filter(function(p){return run.used.indexOf(p.t)<0;}), n, seed);
   if(!picks.length){picks = pick(POOL,n,seed);}
@@ -179,7 +234,7 @@ function curate(run){
     var d=new Date(now);
     if(allowPrior && i===picks.length-1 && n>1){d.setDate(1);d.setDate(0);d.setDate(Math.max(1,d.getDate()-6-i));}
     else {d.setDate(Math.max(1,now.getDate()-(2+i*3)));}
-    var pub = run.params.publisher==="Any credible publisher" ? PUBLISHERS[(seed+i)%PUBLISHERS.length] : "Sample "+run.params.publisher+" (fictional)";
+    var pub = PUBLISHERS[(seed+i)%PUBLISHERS.length];
     var title=p.t.replace("{topic}",run.params.topic);
     return {title:title,src:p.t,publisher:pub,date:d.toISOString(),summary:p.s,take:p.take,angle:p.angle,url:"https://example.com/sample/"+slug(title)};
   });
@@ -207,7 +262,7 @@ function draft(run,a,feedback,version){
     "• Ask suppliers and technology partners for evidence, not adjectives.",
     "• Make the right path the easy path, or people will find another one.",
     "",
-    "So, be honest. Is your "+run.params.topic+" program judged on the number that is easiest to report, or the one that matters? Tell me I am wrong.",
+    "So, be honest. Is your "+run.params.topic+" strategy judged on the number that is easiest to report, or the one that matters? Tell me I am wrong.",
     "",
     "Source: "+a.url,
     "",
@@ -230,7 +285,7 @@ function finishCuration(run){
   run.articles=curate(run);
   run.articles.forEach(function(a){run.used.push(a.src);});
   run.status="Awaiting Gate 1";
-  addEvent(run,"Agent returned "+run.articles.length+" valid article"+(run.articles.length>1?"s":"")+" (recency checked: this month"+(run.params.published==="This month only"?"":" or last month")+")");
+  addEvent(run,"Agent returned "+run.articles.length+" valid article"+(run.articles.length>1?"s":"")+" (recency checked: published within the last "+run.params.recency+" month"+(run.params.recency>1?"s":"")+(run.params.audited?"; audited sources only":"")+")");
   addEvent(run,"Gate 1 request sent to app, Teams, email and agent chat (simulated)");
   save();
 }
@@ -292,31 +347,39 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
 function opts(list,sel){return list.map(function(x){return '<option'+(x===sel?' selected':'')+'>'+esc(x)+'</option>';}).join("");}
 
 function renderNew(){
-  var inds=Object.keys(TOPICS);
+  var inds=Object.keys(TOPICS).sort();
   view.innerHTML=
   '<h1>Start a curation run</h1>'+
-  '<p class="sub">The agent finds 1 to 3 industry articles from this month or last month, then sends them to Gate 1 in the approval app, Teams and email. In this demo the agent is simulated with sample articles.</p>'+
+  '<p class="sub">The agent finds 1 to 3 recent industry articles, then sends them to Gate 1 in the approval app, Teams and email. In this demo the agent is simulated with sample articles.</p>'+
   '<div class="panel"><div class="grid2">'+
-    '<div><label for="fInd">Industry</label><select id="fInd">'+opts(inds,inds[0])+'</select></div>'+
-    '<div><label for="fTopic">Topic</label><select id="fTopic"></select></div>'+
-    '<div><label for="fAud">Audience</label><select id="fAud">'+opts(["Procurement leaders","Contingent workforce program leaders","HR and talent leaders","Finance leaders"])+'</select></div>'+
-    '<div><label for="fPub">Preferred publisher</label><select id="fPub">'+opts(["Any credible publisher","Staffing Industry Analysts","HR Dive","Spend Matters","SHRM","Harvard Business Review"])+'</select></div>'+
-    '<div><label for="fWhen">Published</label><select id="fWhen">'+opts(["This month or last month","This month only"])+'</select></div>'+
-    '<div><label for="fNote">Special instructions (optional)</label><input type="text" id="fNote" placeholder="e.g. Focus on new state contractor laws"></div>'+
-  '</div><div class="row" style="margin-top:18px"><button class="btn primary" id="startBtn">Start run</button><span class="wc">Runs in your browser only.</span></div>'+
+    '<div><label for="fInd">Industry</label><select id="fInd"><option value="">Choose an industry</option>'+opts(inds)+'</select></div>'+
+    '<div><label for="fTopic">Topic *</label><select id="fTopic" disabled><option value="">Pick an industry first</option></select></div>'+
+    '<div><label for="fAud">Audience *</label><select id="fAud">'+opts(AUDIENCES,AUDIENCES[0])+'</select></div>'+
+    '<div><label for="fStyle">Management style *</label><select id="fStyle">'+opts(STYLES,"Strategic")+'</select></div>'+
+    '<div><label for="fRec">Recency (months) *</label><select id="fRec">'+opts(["1","2","3","4","5","6"],"1")+'</select></div>'+
+    '<div><label for="fPub">Publisher/Account (optional)</label><input type="text" id="fPub" placeholder="e.g. Staffing Industry Analysts, Moody\'s"></div>'+
+  '</div>'+
+  '<label class="check"><input type="checkbox" id="fAud2" checked> Audited sources only *</label>'+
+  '<label for="fNote" style="margin-top:14px">Special instructions (optional notes passed through to the agent)</label><textarea id="fNote" placeholder="e.g. Focus on new state contractor laws"></textarea>'+
+  '<div class="row" style="margin-top:18px"><button class="btn primary" id="startBtn" disabled>Start run</button><span class="wc">Runs in your browser only.</span></div>'+
   '<div id="runlog" class="log hidden" aria-live="polite"></div></div>';
-  var fInd=document.getElementById("fInd"),fTopic=document.getElementById("fTopic");
-  function fillTopics(){fTopic.innerHTML=opts(TOPICS[fInd.value]);}
-  fInd.onchange=fillTopics;fillTopics();
-  document.getElementById("startBtn").onclick=function(){
+  var fInd=document.getElementById("fInd"),fTopic=document.getElementById("fTopic"),startBtn=document.getElementById("startBtn");
+  function fillTopics(){
+    if(!fInd.value){fTopic.innerHTML='<option value="">Pick an industry first</option>';fTopic.disabled=true;}
+    else{fTopic.innerHTML='<option value="">Choose a topic</option>'+opts(TOPICS[fInd.value]);fTopic.disabled=false;}
+    syncBtn();
+  }
+  function syncBtn(){startBtn.disabled=!fTopic.value;}
+  fInd.onchange=fillTopics;fTopic.onchange=syncBtn;
+  startBtn.onclick=function(){
     var btn=this;btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Sending...';
-    var run=startRun({industry:fInd.value,topic:fTopic.value,audience:document.getElementById("fAud").value,publisher:document.getElementById("fPub").value,published:document.getElementById("fWhen").value,notes:document.getElementById("fNote").value.trim()});
-    runCuration(run,document.getElementById("runlog"),function(){btn.disabled=false;btn.textContent="Start run";});
+    var run=startRun({industry:fInd.value,topic:fTopic.value,audience:document.getElementById("fAud").value,style:document.getElementById("fStyle").value,recency:document.getElementById("fRec").value,publisher:document.getElementById("fPub").value.trim(),audited:document.getElementById("fAud2").checked,notes:document.getElementById("fNote").value.trim()});
+    runCuration(run,document.getElementById("runlog"),function(){btn.textContent="Start run";syncBtn();});
   };
 }
 
 function runCuration(run,logEl,done){
-  var lines=["Request "+run.id+" logged to the run list","Calling the News Curator agent...","Searching credible publishers for "+run.params.topic,"Checking recency, required fields and links"];
+  var lines=["Request "+run.id+" logged to the run list","Calling the News Curator agent...","Instructions: Industry: "+run.params.industry+". Topic: "+run.params.topic+". Audience: "+run.params.audience+". Management style: "+run.params.style+". Recency: "+run.params.recency+" month(s). Audited sources only: "+(run.params.audited?"Yes":"No")+(run.params.publisher?". Preferred publisher/account: "+run.params.publisher:"")+(run.params.notes?". "+run.params.notes:""),"Searching credible publishers for "+run.params.topic+" (demo uses fictional sample publishers)","Checking recency, required fields and links"];
   logEl.classList.remove("hidden");logEl.innerHTML="";
   var i=0;
   (function next(){
@@ -351,7 +414,7 @@ function renderRun(){
   var run=find(current.id);
   if(!run){go("approvals");return;}
   var head='<div class="row" style="justify-content:space-between"><h1>'+esc(run.id)+'</h1>'+statusPill(run.status)+'</div>'+stepper(run)+
-    '<div class="facts"><div class="fact"><b>Run type</b>'+esc(run.runType)+'</div><div class="fact"><b>Topic</b>'+esc(run.params.topic)+'</div><div class="fact"><b>Audience</b>'+esc(run.params.audience)+'</div><div class="fact"><b>Send-backs so far</b>'+run.sendBacks+'</div></div>';
+    '<div class="facts"><div class="fact"><b>Run type</b>'+esc(run.runType)+'</div><div class="fact"><b>Topic</b>'+esc(run.params.topic)+'</div><div class="fact"><b>Audience</b>'+esc(run.params.audience)+'</div><div class="fact"><b>Management style</b>'+esc(run.params.style||"Strategic")+'</div><div class="fact"><b>Send-backs so far</b>'+run.sendBacks+'</div></div>';
   if(run.status==="Awaiting Gate 1"){view.innerHTML=head+gate1Html(run);wireGate1(run);}
   else if(run.status==="Awaiting Gate 2"){view.innerHTML=head+gate2Html(run);wireGate2(run);}
   else if(run.status==="Curating"){view.innerHTML=head+'<div class="panel"><h2>Finding new articles</h2><div id="runlog" class="log"></div></div>';runCuration(run,document.getElementById("runlog"),function(){setTimeout(function(){if(current.id===run.id)render();},700);});}
@@ -360,7 +423,7 @@ function renderRun(){
 }
 
 function gate1Html(run){
-  var h='<div class="panel"><span class="status s-g1">Approval gate 1</span><h2 style="margin-top:10px">Contingent Workforce Article Options for Review</h2><p class="sub">Nothing gets drafted until you choose. Pick one article, send back for new options, or reject to stop the run.</p>';
+  var h='<div class="panel"><span class="status s-g1">Approval gate 1</span><h2 style="margin-top:10px">'+esc(run.params.industry)+' Article Options for Review</h2><p class="sub">Nothing gets drafted until you choose. Pick one article, send back for new options, or reject to stop the run.</p>';
   run.articles.forEach(function(a,i){
     h+='<div class="article"><h3>'+(i+1)+'. '+esc(a.title)+'<span class="sample">Sample</span></h3>'+
       '<div class="meta">'+esc(a.publisher)+' · Published '+fmtDate(new Date(a.date))+'</div><p style="margin:0 0 12px">'+esc(a.summary)+'</p>'+
